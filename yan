@@ -69,7 +69,7 @@ RunService.RenderStepped:Connect(function()
                     box.Size = Vector2.new(10, 10)
                     box.Position = Vector2.new(headPos.X - 7.5, headPos.Y - 7.5)
                     box.Color = _G.ESPColor
-                    box.Thickness = 2
+                    box.Thickness = 1
                     box.Transparency = 0.7
                     box.Filled = false
                     box.Visible = true
