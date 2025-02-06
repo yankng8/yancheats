@@ -7,7 +7,7 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
 local l = loadstring(game:HttpGet("https://raw.githubusercontent.com/laagginq/ui-libraries/main/dxhooknotify/src.lua", true))()
-l:Notify("Yan Cheat V2","Menu Esta Carregando Aguarde",5)
+l:Notify("Yan Cheat","Menu Esta Carregando Aguarde",5)
 
 -- ⚙️ Configurações Iniciais do Aimbot e ESP
 _G.AimbotEnabled = false
