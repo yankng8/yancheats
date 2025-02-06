@@ -49,7 +49,7 @@ RunService.RenderStepped:Connect(function()
     FOVCircle.Visible = _G.AimbotEnabled and _G.CircleVisible
 
     if _G.AimbotEnabled then
-        if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+        if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
             local target = GetClosestPlayer()
             if target and target.Character and target.Character:FindFirstChild(_G.AimPart) then
                 TweenService:Create(Camera, TweenInfo.new(0.1), {
@@ -175,7 +175,7 @@ local ESPToggle = Instance.new("TextButton", VisualsFrame)
 ESPToggle.Size = UDim2.new(0, 280, 0, 40)
 ESPToggle.Position = UDim2.new(0, 20, 0, 10)
 ESPToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ESPToggle.BackgroundTransparency = 0.2
+ESPToggle.BackgroundTransparency = 0.3
 ESPToggle.Text = "Ativar ESP (Desativado)"
 ESPToggle.TextColor3 = Color3.new(1, 1, 1)
 ESPToggle.Font = Enum.Font.Gotham
@@ -190,7 +190,7 @@ local ColorPicker = Instance.new("TextButton", VisualsFrame)
 ColorPicker.Size = UDim2.new(0, 280, 0, 40)
 ColorPicker.Position = UDim2.new(0, 20, 0, 60)
 ColorPicker.BackgroundColor3 = _G.ESPColor
-ColorPicker.BackgroundTransparency = 0.2
+ColorPicker.BackgroundTransparency = 0.3
 ColorPicker.Text = "Mudar Cor do ESP"
 ColorPicker.TextColor3 = Color3.new(1, 1, 1)
 ColorPicker.Font = Enum.Font.Gotham
