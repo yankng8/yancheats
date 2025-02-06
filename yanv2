@@ -1,0 +1,238 @@
+-- 📦 Serviços do Roblox
+local Camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+-- ⚙️ Configurações Iniciais do Aimbot e ESP
+_G.AimbotEnabled = false
+_G.CircleRadius = 80
+_G.CircleVisible = true
+_G.AimPart = "Head"
+_G.ESPEnabled = false
+_G.ESPColor = Color3.fromRGB(255, 0, 0)
+
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Color = Color3.fromRGB(160, 32, 240)
+FOVCircle.Thickness = 1
+FOVCircle.Transparency = 0.2
+FOVCircle.NumSides = 64
+FOVCircle.Filled = false
+FOVCircle.Visible = _G.CircleVisible
+
+local function GetClosestPlayer()
+    local MaximumDistance = _G.CircleRadius
+    local Target = nil
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+            local TargetPart = player.Character:FindFirstChild(_G.AimPart)
+            if TargetPart then
+                local ScreenPos, OnScreen = Camera:WorldToScreenPoint(TargetPart.Position)
+                if OnScreen then
+                    local Distance = (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(ScreenPos.X, ScreenPos.Y)).Magnitude
+                    if Distance < MaximumDistance then
+                        MaximumDistance = Distance
+                        Target = player
+                    end
+                end
+            end
+        end
+    end
+    return Target
+end
+
+RunService.RenderStepped:Connect(function()
+    FOVCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+    FOVCircle.Radius = _G.CircleRadius
+    FOVCircle.Visible = _G.AimbotEnabled and _G.CircleVisible
+
+    if _G.AimbotEnabled then
+        if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+            local target = GetClosestPlayer()
+            if target and target.Character and target.Character:FindFirstChild(_G.AimPart) then
+                TweenService:Create(Camera, TweenInfo.new(0.1), {
+                    CFrame = CFrame.new(Camera.CFrame.Position, target.Character[_G.AimPart].Position)
+                }):Play()
+            end
+        end
+    end
+
+    if _G.ESPEnabled then
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+                local head = player.Character.Head
+                local headPos, onScreen = Camera:WorldToViewportPoint(head.Position)
+                if onScreen then
+                    local box = Drawing.new("Square")
+                    box.Size = Vector2.new(10, 10)
+                    box.Position = Vector2.new(headPos.X - 7.5, headPos.Y - 7.5)
+                    box.Color = _G.ESPColor
+                    box.Thickness = 1
+                    box.Transparency = 0.7
+                    box.Filled = false
+                    box.Visible = true
+
+                    task.delay(0.03, function()
+                        box:Remove()
+                    end)
+                end
+            end
+        end
+    end
+end)
+
+-- 🖥️ Interface Personalizada
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+
+-- Frame Principal
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 320, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -160, 0.5, -140)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BackgroundTransparency = 0.3
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true
+MainFrame.Visible = true
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "🎯 Custom UI - Aimbot & ESP"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 22
+
+local SubTitle = Instance.new("TextLabel", MainFrame)
+SubTitle.Size = UDim2.new(1, 0, 0, 20)
+SubTitle.Position = UDim2.new(0, 0, 1, -20)
+SubTitle.BackgroundTransparency = 1
+SubTitle.Text = "Yan Cheat"
+SubTitle.TextColor3 = Color3.new(1, 1, 1)
+SubTitle.Font = Enum.Font.Gotham
+SubTitle.TextSize = 14
+
+-- Tecla para abrir/fechar UI
+local isVisible = true
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.RightControl then
+        isVisible = not isVisible
+        MainFrame.Visible = isVisible
+    end
+end)
+
+-- Aba de Aimbot
+local AimbotFrame = Instance.new("Frame", MainFrame)
+AimbotFrame.Size = UDim2.new(1, 0, 1, -30)
+AimbotFrame.Position = UDim2.new(0, 0, 0, 30)
+AimbotFrame.BackgroundTransparency = 1
+AimbotFrame.Visible = true
+
+local Toggle = Instance.new("TextButton", AimbotFrame)
+Toggle.Size = UDim2.new(0, 280, 0, 40)
+Toggle.Position = UDim2.new(0, 20, 0, 10)
+Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Toggle.BackgroundTransparency = 0.2
+Toggle.Text = "Ativar Aimbot (Desativado)"
+Toggle.TextColor3 = Color3.new(1, 1, 1)
+Toggle.Font = Enum.Font.Gotham
+Toggle.TextSize = 18
+
+Toggle.MouseButton1Click:Connect(function()
+    _G.AimbotEnabled = not _G.AimbotEnabled
+    Toggle.Text = _G.AimbotEnabled and "Ativar Aimbot (Ativado)" or "Ativar Aimbot (Desativado)"
+    _G.CircleVisible = _G.AimbotEnabled
+    FOVCircle.Visible = _G.CircleVisible
+end)
+
+local FOVSlider = Instance.new("TextButton", AimbotFrame)
+FOVSlider.Size = UDim2.new(0, 280, 0, 40)
+FOVSlider.Position = UDim2.new(0, 20, 0, 60)
+FOVSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+FOVSlider.BackgroundTransparency = 0.2
+FOVSlider.Text = "Ajustar FOV (Atual: 80)"
+FOVSlider.TextColor3 = Color3.new(1, 1, 1)
+FOVSlider.Font = Enum.Font.Gotham
+FOVSlider.TextSize = 18
+
+FOVSlider.MouseButton1Click:Connect(function()
+    _G.CircleRadius = (_G.CircleRadius + 10) % 300
+    if _G.CircleRadius == 0 then _G.CircleRadius = 10 end
+    FOVSlider.Text = "Ajustar FOV (Atual: " .. _G.CircleRadius .. ")"
+end)
+
+-- Aba de Visuais
+local VisualsFrame = Instance.new("Frame", MainFrame)
+VisualsFrame.Size = UDim2.new(1, 0, 1, -30)
+VisualsFrame.Position = UDim2.new(0, 0, 0, 30)
+VisualsFrame.BackgroundTransparency = 1
+VisualsFrame.Visible = false
+
+local ESPToggle = Instance.new("TextButton", VisualsFrame)
+ESPToggle.Size = UDim2.new(0, 280, 0, 40)
+ESPToggle.Position = UDim2.new(0, 20, 0, 10)
+ESPToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ESPToggle.BackgroundTransparency = 0.2
+ESPToggle.Text = "Ativar ESP (Desativado)"
+ESPToggle.TextColor3 = Color3.new(1, 1, 1)
+ESPToggle.Font = Enum.Font.Gotham
+ESPToggle.TextSize = 18
+
+ESPToggle.MouseButton1Click:Connect(function()
+    _G.ESPEnabled = not _G.ESPEnabled
+    ESPToggle.Text = _G.ESPEnabled and "Ativar ESP (Ativado)" or "Ativar ESP (Desativado)"
+end)
+
+local ColorPicker = Instance.new("TextButton", VisualsFrame)
+ColorPicker.Size = UDim2.new(0, 280, 0, 40)
+ColorPicker.Position = UDim2.new(0, 20, 0, 60)
+ColorPicker.BackgroundColor3 = _G.ESPColor
+ColorPicker.BackgroundTransparency = 0.2
+ColorPicker.Text = "Mudar Cor do ESP"
+ColorPicker.TextColor3 = Color3.new(1, 1, 1)
+ColorPicker.Font = Enum.Font.Gotham
+ColorPicker.TextSize = 18
+
+ColorPicker.MouseButton1Click:Connect(function()
+    _G.ESPColor = Color3.fromRGB(math.random(0,255), math.random(0,255), math.random(0,255))
+    ColorPicker.BackgroundColor3 = _G.ESPColor
+end)
+
+-- Botões de Navegação
+local AimbotTab = Instance.new("TextButton", MainFrame)
+AimbotTab.Size = UDim2.new(0.5, 0, 0, 30)
+AimbotTab.Position = UDim2.new(0, 0, 0, 0)
+AimbotTab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+AimbotTab.Text = "Aimbot"
+AimbotTab.TextColor3 = Color3.new(1, 1, 1)
+AimbotTab.Font = Enum.Font.Gotham
+AimbotTab.TextSize = 18
+
+AimbotTab.MouseButton1Click:Connect(function()
+    AimbotFrame.Visible = true
+    VisualsFrame.Visible = false
+end)
+
+local VisualsTab = Instance.new("TextButton", MainFrame)
+VisualsTab.Size = UDim2.new(0.5, 0, 0, 30)
+VisualsTab.Position = UDim2.new(0.5, 0, 0, 0)
+VisualsTab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+VisualsTab.Text = "Visuais"
+VisualsTab.TextColor3 = Color3.new(1, 1, 1)
+VisualsTab.Font = Enum.Font.Gotham
+VisualsTab.TextSize = 18
+
+VisualsTab.MouseButton1Click:Connect(function()
+    AimbotFrame.Visible = false
+    VisualsFrame.Visible = true
+end)
+
+-- Melhorias Visuais
+for _, element in ipairs(MainFrame:GetChildren()) do
+    if element:IsA("TextButton") or element:IsA("TextLabel") then
+        element.TextStrokeTransparency = 0.8
+    end
+end
