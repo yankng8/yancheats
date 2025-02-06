@@ -15,7 +15,7 @@ _G.ESPEnabled = false
 _G.ESPColor = Color3.fromRGB(255, 0, 0)
 
 local FOVCircle = Drawing.new("Circle")
-FOVCircle.Color = Color3.fromRGB(255, 255, 255)
+FOVCircle.Color = Color3.fromRGB(160, 32, 240)
 FOVCircle.Thickness = 1
 FOVCircle.Transparency = 0.5
 FOVCircle.NumSides = 64
