@@ -128,14 +128,14 @@ end)
 local AimbotFrame = Instance.new("Frame", MainFrame)
 AimbotFrame.Size = UDim2.new(1, 0, 1, -30)
 AimbotFrame.Position = UDim2.new(0, 0, 0, 30)
-AimbotFrame.BackgroundTransparency = 1
+AimbotFrame.BackgroundTransparency = 0.3
 AimbotFrame.Visible = true
 
 local Toggle = Instance.new("TextButton", AimbotFrame)
 Toggle.Size = UDim2.new(0, 280, 0, 40)
 Toggle.Position = UDim2.new(0, 20, 0, 10)
 Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Toggle.BackgroundTransparency = 0.2
+Toggle.BackgroundTransparency = 0.3
 Toggle.Text = "Ativar Aimbot (Desativado)"
 Toggle.TextColor3 = Color3.new(1, 1, 1)
 Toggle.Font = Enum.Font.Gotham
@@ -168,7 +168,7 @@ end)
 local VisualsFrame = Instance.new("Frame", MainFrame)
 VisualsFrame.Size = UDim2.new(1, 0, 1, -30)
 VisualsFrame.Position = UDim2.new(0, 0, 0, 30)
-VisualsFrame.BackgroundTransparency = 1
+VisualsFrame.BackgroundTransparency = 0.2
 VisualsFrame.Visible = false
 
 local ESPToggle = Instance.new("TextButton", VisualsFrame)
